@@ -29,7 +29,6 @@ const NavSkill = () => {
   }
 
   return (
-    // loop through data and return a button for each skill
     <div className="flex flex-col items-center justify-center gap-4">
       {data.skills.map((skill: { name: string }) => (
         <button

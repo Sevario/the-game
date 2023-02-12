@@ -10,7 +10,6 @@ const queryClient = new QueryClient();
 
 const Home: NextPage = () => {
   return (
-
     <QueryClientProvider client={queryClient}>
      <Head>
         <meta name="description" content="The game" />
