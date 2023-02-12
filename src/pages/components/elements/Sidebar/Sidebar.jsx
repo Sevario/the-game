@@ -26,7 +26,7 @@ const AuthShowcase = () => {
 
 const Sidebar = () => {
   return (
-    <aside className="fixed mx-3 h-screen w-64 p-4 rounded-xl border-slate-700 bg-gray-50">
+    <aside className="fixed mx-3 h-screen w-64 p-4 rounded-xl border-slate-700 bg-slate-800">
       <h1 className="border-b border-slate-700 p-3 text-center text-2xl font-bold text-black">
         {gameName}
       </h1>
