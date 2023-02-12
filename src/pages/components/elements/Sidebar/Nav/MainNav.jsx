@@ -1,5 +1,5 @@
 import React from "react";
-import NavSkill from "./NavSkill.jsx";
+import NavSkill from "./NavSkill";
 
 const MainNav = () => {
     return (

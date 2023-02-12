@@ -27,14 +27,14 @@ const NavSkill = () => {
     }
 
     if (isError) {
-        return <span>Error: {error.message}</span>
+        return <span>Error: {(error as Error).message}</span>
     }
     console.log()
 
     return (
         // loop through data and return a button for each skill
         <div className="flex flex-col items-center justify-center gap-4">
-            {data.skills.map((skill) => (
+            {data.skills.map((skill: { name: string }) => (
                 <button className="text-white no-underline transition hover:bg-white/20" key={skill.name}>{skill.name}</button>
             ))}
         </div>
