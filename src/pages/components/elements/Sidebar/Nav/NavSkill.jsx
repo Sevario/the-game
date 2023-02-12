@@ -5,7 +5,7 @@ import {
     useQueryClient,
     QueryClient,
     QueryClientProvider,
-  } from '@tanstack/react-query'
+} from '@tanstack/react-query'
 
 
 const NavSkill = () => {
@@ -14,20 +14,29 @@ const NavSkill = () => {
 
     const fetchSkills = async () => {
         const res = await fetch('skills.json');
-        console.log(res)
         return res.json();
     };
 
-    const { data, error, isLoading } = useQuery(['skills'], fetchSkills, {
-        staleTime: Infinity,
-        enabled: false,
-    });
-    
+    const { isLoading, isError, data, error } = useQuery({
+        queryKey: ['skills'],
+        queryFn: fetchSkills,
+    })
+
+    if (isLoading) {
+        return <span>Loading...</span>
+    }
+
+    if (isError) {
+        return <span>Error: {error.message}</span>
+    }
+    console.log()
 
     return (
-        <div className="border-t-2 border-slate-700 w-full flex flex-col items-center justify-center gap-4">
-            {/* loop through skillList object */}
-
+        // loop through data and return a button for each skill
+        <div className="flex flex-col items-center justify-center gap-4">
+            {data.skills.map((skill) => (
+                <button className="text-white no-underline transition hover:bg-white/20" key={skill.name}>{skill.name}</button>
+            ))}
         </div>
     );
 };
