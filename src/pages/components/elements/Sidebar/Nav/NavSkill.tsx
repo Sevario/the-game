@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useDispatch, useSelector, connect } from "react-redux";
-import { loadSkills, addSkill } from "@store/reducers";
-// import { RootState } from '@store/store';
+import { useSession } from 'next-auth/react';
 
 const NavSkill = () => {
   const [skillList, setSkillList] = useState(null);
-
+  const { data: session } = useSession();
+  const userId = session?.user.id;
 
   useEffect(() => {
     async function fetchSkillListData() {
       try {
-        const response = await fetch(`https://sevario.xyz:6969/api/skills/`);
+        const response = await fetch(`https://sevario.xyz:6969/api/skills/` + userId);
         if (!response.ok) {
           throw new Error(`HTTP error: ${response.status}`);
         }
         const data = await response.json();
+        console.log(data);
         setSkillList(data.result);
       } catch (err) {
         console.error('Failed to fetch skill data:', err);
@@ -38,13 +38,13 @@ const NavSkill = () => {
     return (
       // loop through data and return a button for each skill
       <div className="flex flex-col items-center justify-center gap-4">
-        {skillList.map((skill: { name: string; level: number }) => (
-          <div className="" key={skill.name}>
+        {skillList.map((skill: { skill_name: string; level: number }) => (
+          <div className="" key={skill.skill_name}>
             <Link
-              href={`/skills/${skill.name.toLowerCase()}`}
+              href={`/skills/${skill.skill_name.toLowerCase()}`}
               className="text-white no-underline transition hover:bg-white/20"
             >
-              {capitalizeWords(skill.name)} ({skill.level})
+              {capitalizeWords(skill.skill_name)} (1)
             </Link>
           </div>
         ))}
