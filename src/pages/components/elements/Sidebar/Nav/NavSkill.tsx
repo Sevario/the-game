@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useDispatch, useSelector, connect } from 'react-redux';
-import { loadSkills, addSkill } from '@store/reducers';
+import { useDispatch, useSelector, connect } from "react-redux";
+import { loadSkills, addSkill } from "@store/reducers";
 // import { RootState } from '@store/store';
 
 const NavSkill = () => {
+  const capitalizeWords = (str) => {
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
 
   const dispatch = useDispatch();
 
@@ -12,7 +19,7 @@ const NavSkill = () => {
     dispatch(loadSkills());
   }, [dispatch]);
 
-  const skillsSelector = state => state.skills;
+  const skillsSelector = (state) => state.skills;
 
   const skills = useSelector(skillsSelector);
   // console.log(skills);
@@ -23,10 +30,10 @@ const NavSkill = () => {
         {skills.map((skill: { name: string; level: number }) => (
           <div className="" key={skill.name}>
             <Link
-              href={`/components/skills/${skill.name}`}
+              href={`/skills/${skill.name.toLowerCase()}`}
               className="text-white no-underline transition hover:bg-white/20"
             >
-              {skill.name} ({skill.level})
+              {capitalizeWords(skill.name)} ({skill.level})
             </Link>
           </div>
         ))}
