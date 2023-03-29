@@ -5,6 +5,26 @@ import { loadSkills, addSkill } from "@store/reducers";
 // import { RootState } from '@store/store';
 
 const NavSkill = () => {
+  const [skillList, setSkillList] = useState(null);
+
+
+  useEffect(() => {
+    async function fetchSkillListData() {
+      try {
+        const response = await fetch(`https://sevario.xyz:6969/api/skills/`);
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status}`);
+        }
+        const data = await response.json();
+        setSkillList(data.result);
+      } catch (err) {
+        console.error('Failed to fetch skill data:', err);
+      }
+    }
+
+    fetchSkillListData();
+  }, []);
+
   const capitalizeWords = (str) => {
     return str
       .toLowerCase()
@@ -13,21 +33,12 @@ const NavSkill = () => {
       .join(" ");
   };
 
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(loadSkills());
-  }, [dispatch]);
-
-  const skillsSelector = (state) => state.skills;
-
-  const skills = useSelector(skillsSelector);
-  // console.log(skills);
-  if (skills) {
+  console.log(skillList);
+  if (skillList) {
     return (
       // loop through data and return a button for each skill
       <div className="flex flex-col items-center justify-center gap-4">
-        {skills.map((skill: { name: string; level: number }) => (
+        {skillList.map((skill: { name: string; level: number }) => (
           <div className="" key={skill.name}>
             <Link
               href={`/skills/${skill.name.toLowerCase()}`}

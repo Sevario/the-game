@@ -52,7 +52,6 @@ const Woodcutting = () => {
       return;
     }
     async function fetchSkillData() {
-      console.log(`https://sevario.xyz:6969/api/skill/'${skillName}/${userId}`)
       try {
         const response = await fetch(`https://sevario.xyz:6969/api/skill/${skillName}/${userId}`);
         if (!response.ok) {
