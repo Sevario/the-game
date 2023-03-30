@@ -3,12 +3,15 @@ import Link from "next/link";
 import { useSession } from 'next-auth/react';
 
 const NavSkill = () => {
-  const [skillList, setSkillList] = useState(null);
+  const [skillList, setSkillList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { data: session } = useSession();
   const userId = session?.user.id;
+  // console.log(userId);
 
   useEffect(() => {
     async function fetchSkillListData() {
+      // console.log(`https://sevario.xyz:6969/api/skills/` + userId);
       try {
         const response = await fetch(`https://sevario.xyz:6969/api/skills/` + userId);
         if (!response.ok) {
@@ -17,13 +20,15 @@ const NavSkill = () => {
         const data = await response.json();
         console.log(data);
         setSkillList(data.result);
+        setLoading(false);
+        console.log('Skill List: ' + data.result);
       } catch (err) {
         console.error('Failed to fetch skill data:', err);
       }
     }
 
     fetchSkillListData();
-  }, []);
+  }, [userId]);
 
   const capitalizeWords = (str) => {
     return str
@@ -33,26 +38,28 @@ const NavSkill = () => {
       .join(" ");
   };
 
-  console.log(skillList);
-  if (skillList) {
+  if (loading) {
     return (
-      // loop through data and return a button for each skill
-      <div className="flex flex-col items-center justify-center gap-4">
-        {skillList.map((skill: { skill_name: string; level: number }) => (
-          <div className="" key={skill.skill_name}>
-            <Link
-              href={`/skills/${skill.skill_name.toLowerCase()}`}
-              className="text-white no-underline transition hover:bg-white/20"
-            >
-              {capitalizeWords(skill.skill_name)} (1)
-            </Link>
-          </div>
-        ))}
-      </div>
-    );
-  } else {
-    return <div>Loading...</div>; // Show a loading message when skills data is not yet available
+      <div>loading...</div>
+    )
   }
+  return (
+    // loop through data and return a button for each skill
+    <div className="flex flex-col items-center justify-center gap-4">
+
+      {skillList.map((skill: { skill_name: string; level: number }) => (
+        <div className="" key={skill.skills.skill_name}>
+          {console.log(skill)}
+          <Link
+            href={`/skills/${skill.skills.skill_name}`}
+            className="text-white no-underline transition hover:bg-white/20"
+          >
+            {capitalizeWords(skill.skills.skill_name)} (1)
+          </Link>
+        </div>
+      ))}
+    </div>
+  );
 };
 
 export default NavSkill;

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSession } from 'next-auth/react';
+import { stringify } from "querystring";
 
 const Woodcutting = () => {
   const [ws, setWs] = useState(null);
@@ -43,7 +44,10 @@ const Woodcutting = () => {
 
   const handleSendMessage = () => {
     if (ws) {
-      ws.send("Hello, server!");
+      ws.send( JSON.stringify({
+        "type": "skill",
+      })
+      );
     }
   };
 
@@ -81,16 +85,16 @@ const Woodcutting = () => {
         </h3>
         <p>Description: {skillData.description}</p>
         <p>Current XP: {skillData.current_xp}</p>
-        <button onClick={handleConnect} disabled={ws}>
+        <button className="rounded-full bg-blue-700 px-4 py-2 mb-2 mt-5" onClick={handleConnect} disabled={ws}>
           Connect
         </button>
         <br />
-        <button onClick={handleDisconnect} disabled={!ws}>
+        <button className="rounded-full bg-blue-700 px-4 py-2 mb-2" onClick={handleDisconnect} disabled={!ws}>
           Disconnect
         </button>
         <br />
-        <button onClick={handleSendMessage} disabled={!ws}>
-          Send Message
+        <button className="rounded-full bg-blue-700 p-4 py-2 mb-2" onClick={handleSendMessage} disabled={!ws}>
+          Increase xp by 1
           </button>
       </>
     );

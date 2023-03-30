@@ -2,7 +2,7 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 
 const Skill = ({ skill }) => {
-  const SkillComponent = dynamic(() => import(`./${skill}`), {
+  const SkillComponent = dynamic(() => import(`../components/skills/${skill}`), {
     loading: () => <div>Loading...</div>,
     onError: () => <div>404 - Skill not found</div>,
   });
