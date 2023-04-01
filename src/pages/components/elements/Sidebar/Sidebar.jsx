@@ -3,8 +3,10 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link.js";
 import Menu from "./Nav/MainNav.jsx";
 const gameName = "The Game";
+import useWebSocket from '../../../hooks/useSkills.jsx';
 
 const AuthShowcase = () => {
+  
   const { data: sessionData } = useSession();
 
   return (

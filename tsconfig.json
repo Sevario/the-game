@@ -18,7 +18,12 @@
     "noUncheckedIndexedAccess": true,
     "baseUrl": ".",
     "paths": {
-      "@store/*": ["src/pages/store/*"]
+      "@store/*": ["src/pages/store/*"],
+      "@hooks/*": ["src/pages/hooks/*"],
+      "@context/*": ["src/pages/context/*"],
+      "@components/*": ["src/pages/components/*"],
+      "@nav/*": ["src/pages/components/elements/Sidebar/nav*"],
+      "@skills/*": ["src/pages/components/elements/skills/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs"],

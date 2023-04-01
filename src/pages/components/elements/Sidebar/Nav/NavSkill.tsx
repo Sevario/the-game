@@ -18,10 +18,10 @@ const NavSkill = () => {
           throw new Error(`HTTP error: ${response.status}`);
         }
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         setSkillList(data.result);
         setLoading(false);
-        console.log('Skill List: ' + data.result);
+        // console.log('Skill List: ' + data.result);
       } catch (err) {
         console.error('Failed to fetch skill data:', err);
       }
@@ -49,7 +49,7 @@ const NavSkill = () => {
 
       {skillList.map((skill: { skill_name: string; level: number }) => (
         <div className="" key={skill.skills.skill_name}>
-          {console.log(skill)}
+          {/* {console.log(skill)} */}
           <Link
             href={`/skills/${skill.skills.skill_name}`}
             className="text-white no-underline transition hover:bg-white/20"
