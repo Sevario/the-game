@@ -8,8 +8,8 @@ const useWebSocket = (retryInterval = 5000) => {
     return context;
   }
 
-  const [ws, setWs] = useState(null);
-  const wsRef = useRef(null);
+  const [ws, setWs] = useState<WebSocket | null>(null);
+  const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
     const connectWebSocket = () => {
@@ -56,10 +56,10 @@ const useWebSocket = (retryInterval = 5000) => {
 export default useWebSocket;
 
 
-const getSkill = (url, dependencies = []) => {
+const getSkill = (url: string, dependencies = []) => {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     if (!url) return;
@@ -72,8 +72,12 @@ const getSkill = (url, dependencies = []) => {
       }
       const data = await response.json();
       setData(data);
-    } catch (err) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred.');
+      }
     } finally {
       setIsLoading(false);
     }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useSession } from 'next-auth/react';
 import WebSocketContext from '@context/WebSocketContext';
-import { getSkill } from '@hooks/useSkills.jsx';
+import { getSkill } from '@hooks/useSkills';
 
 const Woodcutting = () => {
   const skillName = 'woodcutting';

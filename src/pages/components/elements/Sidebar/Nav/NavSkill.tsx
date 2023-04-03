@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useSession } from 'next-auth/react';
+import { useSession } from "next-auth/react";
 
 const NavSkill = () => {
   const [skillList, setSkillList] = useState([]);
@@ -13,7 +13,9 @@ const NavSkill = () => {
     async function fetchSkillListData() {
       // console.log(`https://sevario.xyz:6969/api/skills/` + userId);
       try {
-        const response = await fetch(`https://sevario.xyz:6969/api/skills/` + userId);
+        const response = await fetch(
+          `https://sevario.xyz:6969/api/skills/` + userId
+        );
         if (!response.ok) {
           throw new Error(`HTTP error: ${response.status}`);
         }
@@ -23,14 +25,14 @@ const NavSkill = () => {
         setLoading(false);
         // console.log('Skill List: ' + data.result);
       } catch (err) {
-        console.error('Failed to fetch skill data:', err);
+        console.error("Failed to fetch skill data:", err);
       }
     }
 
     fetchSkillListData();
   }, [userId]);
 
-  const capitalizeWords = (str) => {
+  const capitalizeWords = (str: string) => {
     return str
       .toLowerCase()
       .split(" ")
@@ -39,15 +41,26 @@ const NavSkill = () => {
   };
 
   if (loading) {
-    return (
-      <div>loading...</div>
-    )
+    return <div>loading...</div>;
   }
+  interface SkillItem {
+    user_skill_id: number;
+    user_id: string;
+    skill_id: number;
+    level: number;
+    current_xp: number;
+    updated_at: string;
+    skills: {
+      skill_id: number;
+      skill_name: string;
+      description: string;
+    };
+  }
+
   return (
     // loop through data and return a button for each skill
     <div className="flex flex-col items-center justify-center gap-4">
-
-      {skillList.map((skill: { skill_name: string; level: number }) => (
+      {skillList.map((skill: SkillItem) => (
         <div className="" key={skill.skills.skill_name}>
           {/* {console.log(skill)} */}
           <Link

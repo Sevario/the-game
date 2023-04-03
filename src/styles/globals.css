@@ -5,3 +5,35 @@
 body {
     background: #191824;
 }
+
+/* LAYOUT */
+.app_wrapper {
+    display: grid;
+    grid-template-areas: "topbar topbar"
+                         "sidebar main";
+    grid-template: "topbar topbar" 64px 
+                   "sidebar main" 1fr / 352px;
+    gap: 1.655rem;
+    height: 100vh;
+}
+
+.topbar {
+    grid-area: topbar;
+}
+
+.sidebar {
+    grid-area: sidebar;
+}
+
+.main {
+    grid-area: main;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: #fff;
+}
+
+p {
+    color: white;
+}

@@ -5,8 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Layout from "./components/layout";
 import { Provider } from 'react-redux';
 import store from '@store/store';
-import WebSocketContext from './context/WebSocketContext';
-import useWebSocket from './hooks/useSkills';
+import WebSocketContext from '@context/WebSocketContext';
+import useWebSocket from '@hooks/useSkills';
 
 const queryClient = new QueryClient();
 
