@@ -19,10 +19,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   // if oyu have repeating components like header footer etc.
   return (
     <>
-      <div className="app_wrapper">
+      <div className="app_wrapper pb-4">
         <Topbar />
         <Sidebar />
-        <main className="main">{children}</main>
+        <main className="main bg-gray-800 p-2 w-full rounded-xl mr-4">{children}</main>
       </div>
     </>
   );

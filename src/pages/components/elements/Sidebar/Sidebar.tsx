@@ -3,29 +3,6 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link.js";
 import Menu from "@sidebar/Nav/MainNav";
 const gameName = "The Game";
-import useWebSocket from '@hooks/useSkills';
-
-const AuthShowcase = () => {
-  
-  const { data: sessionData } = useSession();
-
-  return (
-    <>
-      <div className="flex flex-row items-center justify-center gap-4 p-2">
-        <p className="text-center text-2xl text-white">
-          {sessionData && <span>{sessionData.user?.name}</span>}
-        </p>
-        <button
-          className="text-white no-underline transition hover:bg-white/20"
-          onClick={sessionData ? () => void signOut() : () => void signIn()}
-        >
-          {sessionData ? "(Sign out)" : "Sign in"}
-        </button>
-      </div>
-      <Menu />
-    </>
-  );
-};
 
 const Sidebar = (layout: object) => {
   return (
@@ -36,7 +13,7 @@ const Sidebar = (layout: object) => {
       </h1>
       </Link>
       {/* {hello.data ? hello.data.greeting : "Loading tRPC query..."} */}
-      <AuthShowcase />
+      <Menu />
     </aside>
   );
 };

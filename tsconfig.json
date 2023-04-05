@@ -24,7 +24,8 @@
       "@components/*": ["src/pages/components/*"],
       "@nav/*": ["src/pages/components/elements/Sidebar/nav*"],
       "@skills/*": ["src/pages/components/elements/skills/*"],
-      "@sidebar/*": ["src/pages/components/elements/Sidebar/*"]
+      "@sidebar/*": ["src/pages/components/elements/Sidebar/*"],
+      "@compskill/*": ["src/pages/components/elements/skills/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs"],

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { useSession } from 'next-auth/react';
 import WebSocketContext from '@context/WebSocketContext';
 import { getSkill } from '@hooks/useSkills';
+import SkillButton from "@compskill/SkillButton";
 
 const Woodcutting = () => {
   const skillName = 'woodcutting';
@@ -42,9 +43,8 @@ const Woodcutting = () => {
         <p>Description: {data.description}</p>
         <p>Current XP: {data.current_xp}</p>
         <br />
-        <button className="rounded-full bg-blue-700 p-4 py-2 mb-2" onClick={handleSendMessage} disabled={!ws}>
-          Increase xp by 1
-        </button>
+        <SkillButton Name="Tree" XP="1" Time="5" Icon="🌳" />
+        <SkillButton Name="Oak Tree" XP="2" Time="10" Icon="🌲" />
       </>
     );
   }
