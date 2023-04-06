@@ -169,7 +169,7 @@ body {
     grid-template-areas: "topbar topbar"
         "sidebar main";
     grid-template: "topbar topbar" 64px "sidebar main" 1fr / 352px;
-    gap: 1.655rem;
+    gap: 1rem;
     height: 100vh;
 }
 
