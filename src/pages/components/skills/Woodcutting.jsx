@@ -17,14 +17,7 @@ const Woodcutting = () => {
     }
   }, [session]);
 
-  const handleSendMessage = () => {
-    if (ws) {
-      ws.send(JSON.stringify({
-        "type": "skill",
-      }));
-      refreshData();
-    }
-  };
+
 
   if (isLoading) {
     // return <div>Loading...</div>;

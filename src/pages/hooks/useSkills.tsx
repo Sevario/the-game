@@ -94,3 +94,21 @@ const getSkill = (url: string, dependencies = []) => {
   return { data, isLoading, error, refreshData };
 };
 export { getSkill };
+
+const startXP = () => {
+  const context = useContext(WebSocketContext);
+
+  if (context) {
+    return context;
+  }
+
+  const [ws, setWs] = useState<WebSocket | null>(null);
+  const wsRef = useRef<WebSocket | null>(null);
+
+  if (ws) {
+    ws.send(JSON.stringify({
+      "type": "skill",
+    }));
+  }
+};
+export { startXP };
