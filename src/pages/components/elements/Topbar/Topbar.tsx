@@ -34,11 +34,11 @@ const SkillName = () => {
   const currentPath = router.asPath;
 
   // Extract the skill name from the current path
-  const skillName = capitalizeWords(currentPath.split("/")[2]); // Adjust this according to your routes structure
+  const skillName = currentPath.split("/")[2]; // Adjust this according to your routes structure
 
   return (
     <div className="flex flex-row items-center justify-center gap-4 p-2">
-      <p className="text-center text-2xl text-white">{skillName}</p>
+      <p className="text-center text-2xl text-white">{skillName ? capitalizeWords(skillName) : "The Game" }</p>
     </div>
   );
 };

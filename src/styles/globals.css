@@ -161,6 +161,10 @@
 body {
     background: #191824;
     font-family: "Roboto";
+    background-image: url(../assets/backgrounds/background1.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 /* LAYOUT */
@@ -168,21 +172,24 @@ body {
     display: grid;
     grid-template-areas: "topbar topbar"
         "sidebar main";
-    grid-template: "topbar topbar" 64px "sidebar main" 1fr / 352px;
-    gap: 1.655rem;
+    grid-template: "topbar topbar" 64px "sidebar main" 1fr / 312px;
+    gap: .45rem;
     height: 100vh;
 }
 
 .topbar {
     grid-area: topbar;
+    background: rgb(30, 41, 59, .95);
 }
 
 .sidebar {
     grid-area: sidebar;
+    background: rgb(30, 41, 59, .95);
 }
 
 .main {
     grid-area: main;
+    background: rgb(30, 41, 59, .95);
 }
 
 h1,

@@ -59,19 +59,21 @@ const NavSkill = () => {
 
   return (
     // loop through data and return a button for each skill
-    <div className="flex flex-col items-center justify-center gap-4">
-      {skillList.map((skill: SkillItem) => (
-        <div className="" key={skill.skills.skill_name}>
-          {/* {console.log(skill)} */}
-          <Link
-            href={`/skills/${skill.skills.skill_name}`}
-            className="text-white no-underline transition hover:bg-white/20"
-          >
-            {capitalizeWords(skill.skills.skill_name)} (1)
-          </Link>
-        </div>
-      ))}
-    </div>
+    <>
+      <h3 className="w-full border-b pb-3 border-gray-700">Skills</h3>
+      <ul>
+        {skillList.map((skill: SkillItem) => (
+          <li key={skill.skills.skill_name}>
+            <Link
+              href={`/skills/${skill.skills.skill_name}`}
+              className="text-white no-underline transition hover:bg-white/20"
+            >
+              {capitalizeWords(skill.skills.skill_name)} (1)
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 };
 

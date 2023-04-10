@@ -1,6 +1,8 @@
 import React from "react";
 import Sidebar from "@sidebar/Sidebar";
 import Topbar from "@components/elements/Topbar/Topbar";
+import { TaskProvider } from "@context/Tasks/TaskContext";
+import TaskProgress from "./Tasks/TaskProgress";
 
 // const appLayout = {
 //   sidebar: {
@@ -18,13 +20,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   // This is kinda needed because otherwise Sidebar wont get rendered on other pages, this file is needed for
   // if oyu have repeating components like header footer etc.
   return (
-    <>
+    <TaskProvider>
       <div className="app_wrapper pb-4">
         <Topbar />
         <Sidebar />
-        <main className="main bg-gray-800 p-2 w-full rounded-xl mr-4">{children}</main>
+        <main className="main bg-gray-800 p-2 rounded-xl mr-2">{children}</main>
       </div>
-    </>
+      <TaskProgress />
+    </TaskProvider>
   );
 };
 

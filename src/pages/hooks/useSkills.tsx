@@ -9,6 +9,7 @@ const useWebSocket = (retryInterval = 5000) => {
   }
 
   const [ws, setWs] = useState<WebSocket | null>(null);
+  const [connected, setConnected] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
@@ -22,6 +23,7 @@ const useWebSocket = (retryInterval = 5000) => {
 
       newWs.addEventListener("open", () => {
         console.log("Connected to the server");
+        setConnected(true);
       });
 
       newWs.addEventListener("message", (event) => {
@@ -30,6 +32,7 @@ const useWebSocket = (retryInterval = 5000) => {
 
       newWs.addEventListener("close", (event) => {
         console.log("Disconnected from the server");
+        setConnected(false);
         wsRef.current = null;
         setTimeout(connectWebSocket, retryInterval);
       });
@@ -50,7 +53,7 @@ const useWebSocket = (retryInterval = 5000) => {
     };
   }, [retryInterval]);
 
-  return ws;
+  return [ws, connected] as [WebSocket | null, boolean];
 };
 
 export default useWebSocket;
@@ -94,3 +97,42 @@ const getSkill = (url: string, dependencies = []) => {
   return { data, isLoading, error, refreshData };
 };
 export { getSkill };
+
+const getSkillT = (url: string, dependencies = []) => {
+  const [dataT, setData] = useState(null);
+  const [isLoadingT, setIsLoading] = useState(true);
+  const [errorT, setError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    if (!url) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Error fetching data');
+      }
+      const data = await response.json();
+      setData(data.woodcutting);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [url]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData, ...dependencies]);
+
+  const refreshDataT = () => {
+    fetchData();
+  };
+
+  return { dataT, isLoadingT, errorT, refreshDataT };
+};
+export { getSkillT };

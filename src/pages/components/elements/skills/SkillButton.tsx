@@ -1,13 +1,81 @@
 import React from "react";
+import { useTask } from "@context/Tasks/TaskContext";
+import useWebSocket from "@hooks/useSkills";
 
-const SkillButton = ({ Name, XP, Time, Icon}: { Name: string, XP: number, Time: number, Icon: string }) => {
+interface SkillButtonProps {
+  Name: string;
+  profession: string;
+  XP: number;
+  Time: number;
+  Icon: string;
+}
+
+const SkillButton: React.FC<SkillButtonProps> = ({
+  Name,
+  profession,
+  XP,
+  Time,
+  Icon,
+}) => {
+  const { activeTask, startTask, stopTask } = useTask();
+  const [ws, connected] = useWebSocket();
+
+  const startTaskServer = async (task) => {
+    try {
+      console.log("Task object:", task);
+      const response = await fetch("https://sevario.xyz:6969/api/task/start", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: "cle1u6wy00000z96c5ztdq08n", task }),
+      });
+      const data = await response.json();
+      console.log(data, "data");
+    } catch (err) {
+      console.error("Error starting task:", err);
+    }
+  };
+  const handleButtonClick = () => {
+    console.log(ws);
+    if(ws instanceof WebSocket && connected) {
+      ws.send(
+        JSON.stringify({
+          type: 'taskStart',
+          message: 'test',
+        })
+      )
+    }
+    if (activeTask && activeTask.name === Name) {
+      stopTask();
+    } else {
+      startTask({ name: Name, profession: profession, xp: XP, time: Time });
+      const taskData = {
+        name: Name,
+        profession: profession,
+        xp: XP,
+        time: Time,
+      };
+      startTaskServer(taskData);
+    }
+  };
+
   return (
-    <div className="rounded-lg bg-blue-700 p-4 py-2 mb-2 max-w-sm max-h-64 w-full h-full cursor-pointer">
-    <p className="text-center text-2xl text-white">{Icon}</p>
-      <p className="text-center text-2xl text-white">{Name}</p>
-      <p className="text-center text-2xl text-white">{XP}</p>
-      <p className="text-center text-2xl text-white">{Time}s</p>
-    </div>
+    <button
+      onClick={handleButtonClick}
+      className="rounded bg-gray-800 p-5 text-gray-300 shadow-sm transition hover:bg-gray-900"
+    >
+      {Icon}
+      <h3 className="text-lg">{Name}</h3>
+      <p className="mb-1 rounded bg-gray-900 p-2">
+        Experience gain: <br />
+        <strong>{XP}</strong>xp
+      </p>
+      <p className="mb-1 rounded bg-gray-900 p-2">
+        Time consuming: <br />
+        <strong>{Time}</strong>s
+      </p>
+    </button>
   );
 };
 

@@ -1,15 +1,22 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useSession } from 'next-auth/react';
-import WebSocketContext from '@context/WebSocketContext';
-import { getSkill } from '@hooks/useSkills';
+import { useSession } from "next-auth/react";
+import WebSocketContext from "@context/WebSocketContext";
+import { getSkill, getSkillT } from "@hooks/useSkills";
 import SkillButton from "@compskill/SkillButton";
 
 const Woodcutting = () => {
-  const skillName = 'woodcutting';
+  const skillName = "woodcutting";
   const { data: session } = useSession();
   const [userId, setUserId] = useState(null);
   const ws = useContext(WebSocketContext);
-  const { data, isLoading, error, refreshData } = getSkill(userId ? `https://sevario.xyz:6969/api/skill/${skillName}/${userId}` : null, [userId, ws]);
+  const { data, isLoading, error, refreshData } = getSkill(
+    userId ? `https://sevario.xyz:6969/api/skill/${skillName}/${userId}` : null,
+    [userId, ws]
+  );
+  const { dataT, isLoadingT, errorT, refreshDataT } = getSkillT(
+    userId ? `https://sevario.xyz:6969/api/skill/${skillName}` : null,
+    [userId, ws]
+  );
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -19,22 +26,28 @@ const Woodcutting = () => {
 
   const handleSendMessage = () => {
     if (ws) {
-      ws.send(JSON.stringify({
-        "type": "skill",
-      }));
+      ws.send(
+        JSON.stringify({
+          type: "skill",
+        })
+      );
       refreshData();
     }
   };
 
-  if (isLoading) {
-    // return <div>Loading...</div>;
+  if (isLoading && isLoadingT) {
+    return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div>Error: {error}</div>;
+  if (error || errorT || (error && errorT)) {
+    return (
+      <div>
+        Error: {error} ErrorTreeData: {errorT}
+      </div>
+    );
   }
 
-  if (data) {
+  if (data && dataT) {
     return (
       <>
         <h3>
@@ -43,8 +56,18 @@ const Woodcutting = () => {
         <p>Description: {data.description}</p>
         <p>Current XP: {data.current_xp}</p>
         <br />
-        <SkillButton Name="Tree" XP="1" Time="5" Icon="🌳" />
-        <SkillButton Name="Oak Tree" XP="2" Time="10" Icon="🌲" />
+        <div className="flex gap-3 flex-wrap justify-center">
+          {dataT.trees.map((tree, id) => (
+            <SkillButton
+              key={id}
+              Name={tree.name}
+              profession={data.skill_name}
+              XP={tree.xp_value}
+              Time={tree.chopping_time}
+              Icon="🌳"
+            />
+          ))}
+        </div>
       </>
     );
   }

@@ -3,7 +3,7 @@ import NavSkill from "@sidebar/Nav/NavSkill";
 
 const MainNav = () => {
     return (
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col gap-4">
                 <NavSkill />
         </div>
     );
