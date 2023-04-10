@@ -30,33 +30,24 @@ const SkillButton: React.FC<SkillButtonProps> = ({
     }
   }, [])
 
-  const startTaskServer = async (task) => {
-    try {
+  // const startTaskServer = async (task) => {
+  //   try {
       
-      console.log("Task object:", task, "userId", userId);
-      const response = await fetch("https://sevario.xyz:6969/api/task/start", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: `${userId}`, task }),
-      });
-      const data = await response.json();
-      console.log(data, "data");
-    } catch (err) {
-      console.error("Error starting task:", err);
-    }
-  };
+  //     console.table("Task object:", task);
+  //     const response = await fetch("https://sevario.xyz:6969/api/task/start", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ userId: `${userId}`, task }),
+  //     });
+  //     const data = await response.json();
+  //     console.log(data, "data");
+  //   } catch (err) {
+  //     console.error("Error starting task:", err);
+  //   }
+  // };
   const handleButtonClick = () => {
-    console.log(ws);
-    if(ws instanceof WebSocket && connected) {
-      ws.send(
-        JSON.stringify({
-          type: 'taskStart',
-          message: 'test',
-        })
-      )
-    }
     if (activeTask && activeTask.name === Name) {
       stopTask();
     } else {
@@ -67,7 +58,18 @@ const SkillButton: React.FC<SkillButtonProps> = ({
         xp: XP,
         time: Time,
       };
-      startTaskServer(taskData);
+      // startTaskServer(taskData);
+  
+      // Send a message to the server to start the task using WebSocket
+      if (ws instanceof WebSocket && connected) {
+        ws.send(
+          JSON.stringify({
+            type: 'taskStart',
+            userId: userId,
+            task: taskData,
+          })
+        );
+      }
     }
   };
 

@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useTask } from "@context/Tasks/TaskContext";
 import useWebSocket from "@hooks/useSkills";
+import { useSession } from "next-auth/react";
 
 const TaskProgress = () => {
   const { activeTask, progress, setProgress, stopTask } = useTask();
   const [intervalId, setIntervalId] = useState(null);
+  const { data: session } = useSession();
+  const [userId, setUserId] = useState('');
   const [progressIntervalId, setProgressIntervalId] = useState(null);
-  const ws = useWebSocket();
+  const [ws, connected] = useWebSocket();
 
   useEffect(() => {
+    if (session) {
+      setUserId(session.user.id);
+    }
     if (activeTask) {
       if (intervalId) {
         clearInterval(intervalId);
@@ -49,22 +55,17 @@ const TaskProgress = () => {
 //   };
 
   
-  const handleStopTaskButton = async () => {
-    try {
-      const response = await fetch('https://sevario.xyz:6969/api/task/stop', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId: 'cle1u6wy00000z96c5ztdq08n' }),
-      });
-      const data = await response.json();
-      console.log(data);
-    } catch (err) {
-      console.error('Error stopping task:', err);
-    }
-    stopTask();
-  };
+const handleStopTaskButton = () => {
+  if (ws instanceof WebSocket && connected) {
+    ws.send(
+      JSON.stringify({
+        type: 'taskStop',
+        userId: `${userId}`,
+      })
+    );
+  }
+  stopTask();
+};
 
   if (!activeTask) {
     return null;
