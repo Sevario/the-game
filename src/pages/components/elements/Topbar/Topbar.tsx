@@ -22,6 +22,7 @@ const AuthShowcase = () => {
     </>
   );
 };
+
 const capitalizeWords = (str: string) => {
   return str
     .toLowerCase()
@@ -29,6 +30,7 @@ const capitalizeWords = (str: string) => {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 };
+
 const SkillName = () => {
   const router = useRouter();
   const currentPath = router.asPath;
