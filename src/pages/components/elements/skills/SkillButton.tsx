@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useTask } from "@context/Tasks/TaskContext";
 import useWebSocket from "@hooks/useSkills";
+import { useSession } from "next-auth/react";
 
 interface SkillButtonProps {
   Name: string;
@@ -18,17 +19,27 @@ const SkillButton: React.FC<SkillButtonProps> = ({
   Icon,
 }) => {
   const { activeTask, startTask, stopTask } = useTask();
+  const [userId, setUserId] = useState('');
   const [ws, connected] = useWebSocket();
+
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (session) {
+      setUserId(session.user.id);
+    }
+  }, [])
 
   const startTaskServer = async (task) => {
     try {
-      console.log("Task object:", task);
+      
+      console.log("Task object:", task, "userId", userId);
       const response = await fetch("https://sevario.xyz:6969/api/task/start", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId: "cle1u6wy00000z96c5ztdq08n", task }),
+        body: JSON.stringify({ userId: `${userId}`, task }),
       });
       const data = await response.json();
       console.log(data, "data");
