@@ -1,8 +1,11 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "@sidebar/Sidebar";
 import Topbar from "@components/elements/Topbar/Topbar";
 import { TaskProvider } from "@context/Tasks/TaskContext";
 import TaskProgress from "./Tasks/TaskProgress";
+import WebSocketContext from '@context/WebSocketContext';
+import useWebSocket from '@hooks/useSkills';
+import { useSession } from "next-auth/react";
 
 // const appLayout = {
 //   sidebar: {
@@ -13,13 +16,17 @@ import TaskProgress from "./Tasks/TaskProgress";
 // };
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
-  // ^ Daniel => React.ReactNode specifies type  of the 'children' prop as React.ReactNode.
-  // From googling I have found out that ReactNode is a type in react "module" that represents renderable component in React
-  // in this case children are all components inside <Layout></Layout> (check _app.tsx)
-
-  // This is kinda needed because otherwise Sidebar wont get rendered on other pages, this file is needed for
-  // if oyu have repeating components like header footer etc.
+  const { data: session } = useSession();
+  const [userId, setUserId] = useState(null);
+  useEffect(() => {
+    if (session?.user?.id) {
+      setUserId(session.user.id);
+    }
+  }, [session]);
+  const ws = useWebSocket();
+  console.log(userId);
   return (
+    <WebSocketContext.Provider value={ws}>
     <TaskProvider>
       <div className="app_wrapper pb-4">
         <Topbar />
@@ -28,6 +35,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       </div>
       <TaskProgress />
     </TaskProvider>
+    </WebSocketContext.Provider>
   );
 };
 
