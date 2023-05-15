@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext, useRef, useCallback } from 'react';
 import WebSocketContext from '@context/WebSocketContext';
 
-const useWebSocket = (retryInterval = 5000) => {
+const useWebSocket = (userId: string | null, retryInterval = 5000) => {
   const context = useContext(WebSocketContext);
 
   if (context) {
@@ -24,6 +24,9 @@ const useWebSocket = (retryInterval = 5000) => {
       newWs.addEventListener("open", () => {
         console.log("Connected to the server");
         setConnected(true);
+        if (userId) {
+          newWs.send(JSON.stringify({ userId }));
+        }
       });
 
       newWs.addEventListener("message", (event) => {
@@ -51,7 +54,7 @@ const useWebSocket = (retryInterval = 5000) => {
         ws.close();
       }
     };
-  }, [retryInterval]);
+  }, [userId, retryInterval]);
 
   return [ws, connected] as [WebSocket | null, boolean];
 };
