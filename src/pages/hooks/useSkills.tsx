@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext, useRef, useCallback } from 'react';
 import WebSocketContext from '@context/WebSocketContext';
 
-const useWebSocket = (userId: string | null, retryInterval = 5000) => {
+const useWebSocket = (initialUserId: string | null = null, retryInterval = 5000) => {
   const context = useContext(WebSocketContext);
 
   if (context) {
@@ -24,8 +24,8 @@ const useWebSocket = (userId: string | null, retryInterval = 5000) => {
       newWs.addEventListener("open", () => {
         console.log("Connected to the server");
         setConnected(true);
-        if (userId) {
-          newWs.send(JSON.stringify({ userId }));
+        if (initialUserId) {
+          newWs.send(JSON.stringify({ type: 'userId', userId: initialUserId }));
         }
       });
 
@@ -47,18 +47,23 @@ const useWebSocket = (userId: string | null, retryInterval = 5000) => {
       setWs(newWs);
     };
 
-    connectWebSocket();
+      connectWebSocket();
 
     return () => {
       if (ws) {
         ws.close();
       }
     };
-  }, [userId, retryInterval]);
+  }, [retryInterval, initialUserId]);
 
-  return [ws, connected] as [WebSocket | null, boolean];
+  const sendUserId = (userId: string) => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'userId', userId }));
+    }
+  };
+
+  return [ws, connected, sendUserId] as [WebSocket | null, boolean, (userId: string) => void];
 };
-
 export default useWebSocket;
 
 
