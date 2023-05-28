@@ -9,7 +9,7 @@ const TaskProgress = () => {
   const { data: session } = useSession();
   const [userId, setUserId] = useState('');
   const [progressIntervalId, setProgressIntervalId] = useState(null);
-  const ws = useWebSocket();
+  const [ws, connected] = useWebSocket();
 
   useEffect(() => {
     if (session) {
@@ -56,17 +56,17 @@ const TaskProgress = () => {
 //   };
 
   
-  const handleStopTaskButton = () => {
-    if (ws.connected) {
-      ws.ws.send(
-        JSON.stringify({
-          type: 'taskStop',
-          userId: `${userId}`,
-        })
-      );
-    }
-    stopTask();
-  };
+const handleStopTaskButton = () => {
+  if (ws instanceof WebSocket && connected) {
+    ws.send(
+      JSON.stringify({
+        type: 'taskStop',
+        userId: `${userId}`,
+      })
+    );
+  }
+  stopTask();
+};
 
   if (!activeTask) {
     return null;
