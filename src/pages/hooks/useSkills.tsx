@@ -31,6 +31,11 @@ const useWebSocket = (userId: string | null, retryInterval = 5000) => {
 
       newWs.addEventListener("message", (event) => {
         console.log(`Received message: ${event.data}`);
+        const data = JSON.parse(event.data);
+        if (data.type === 'skill') {    
+          // refreshData();
+          // refreshDataT();
+        }
       });
 
       newWs.addEventListener("close", (event) => {

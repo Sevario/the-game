@@ -19,11 +19,11 @@ const TaskProgress = () => {
       if (intervalId) {
         clearInterval(intervalId);
       }
-      const id = setInterval(() => {
-        console.log(`Gained ${activeTask.xp} XP in ${activeTask.profession}`);
-        setProgress(0);
-      }, activeTask.time * 1000);
-      setIntervalId(id);
+      // const id = setInterval(() => {
+        // console.log(`Gained ${activeTask.xp} XP in ${activeTask.profession}`);
+      //   setProgress(0);
+      // }, activeTask.time * 1000);
+      // setIntervalId(id);
 
       if (progressIntervalId) {
         clearInterval(progressIntervalId);
@@ -31,11 +31,12 @@ const TaskProgress = () => {
       const progressId = setInterval(() => {
         setProgress((prevProgress) => {
           if (prevProgress >= 100) {
+            console.log(`Gained ${activeTask.xp} XP in ${activeTask.profession}`);
             return 0;
           }
-          return prevProgress + 100 / (activeTask.time * 64);
+          return (prevProgress + (100 / (activeTask.time * 1000)) * 100);
         });
-      }, 1);
+      }, 100);
       setProgressIntervalId(progressId);
     } else {
       clearInterval(intervalId);

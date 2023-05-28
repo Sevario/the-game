@@ -64,6 +64,8 @@ const Woodcutting = () => {
               profession={data.skill_name}
               XP={tree.xp_value}
               Time={tree.chopping_time}
+              Level={tree.lvl}
+              currentLvl={data.level}
               Icon="🌳"
             />
           ))}

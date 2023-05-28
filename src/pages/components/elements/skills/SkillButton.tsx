@@ -9,6 +9,8 @@ interface SkillButtonProps {
   XP: number;
   Time: number;
   Icon: string;
+  Level: number;
+  currentLvl: number;
 }
 
 const SkillButton: React.FC<SkillButtonProps> = ({
@@ -17,6 +19,8 @@ const SkillButton: React.FC<SkillButtonProps> = ({
   XP,
   Time,
   Icon,
+  Level,
+  currentLvl,
 }) => {
   const { activeTask, startTask, stopTask } = useTask();
   const [userId, setUserId] = useState('');
@@ -30,23 +34,6 @@ const SkillButton: React.FC<SkillButtonProps> = ({
     }
   }, [])
 
-  // const startTaskServer = async (task) => {
-  //   try {
-      
-  //     console.table("Task object:", task);
-  //     const response = await fetch("https://sevario.xyz:6969/api/task/start", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ userId: `${userId}`, task }),
-  //     });
-  //     const data = await response.json();
-  //     console.log(data, "data");
-  //   } catch (err) {
-  //     console.error("Error starting task:", err);
-  //   }
-  // };
   const handleButtonClick = () => {
     if (activeTask && activeTask.name === Name) {
       stopTask();
@@ -57,6 +44,7 @@ const SkillButton: React.FC<SkillButtonProps> = ({
         profession: profession,
         xp: XP,
         time: Time,
+        level: Level,
       };
       // startTaskServer(taskData);
   
@@ -76,15 +64,16 @@ const SkillButton: React.FC<SkillButtonProps> = ({
   return (
     <button
       onClick={handleButtonClick}
-      className="rounded bg-gray-800 p-5 text-gray-300 shadow-sm transition hover:bg-gray-900"
+      className={`rounded p-5 text-gray-300 shadow-sm transition bg-gray-800 hover:bg-gray-900 ${currentLvl < Level ? "bg-opacity-60 hover:bg-gray-800" : ""}`}
+      disabled={currentLvl < Level}
     >
       {Icon}
-      <h3 className="text-lg">{Name}</h3>
-      <p className="mb-1 rounded bg-gray-900 p-2">
+      <h3 className="text-lg">{Name} ({Level})</h3>
+      <p className={`mb-1 rounded p-2 bg-gray-900 ${currentLvl < Level ? " bg-opacity-60" : ""}`}>
         Experience gain: <br />
         <strong>{XP}</strong>xp
       </p>
-      <p className="mb-1 rounded bg-gray-900 p-2">
+      <p className={`mb-1 rounded p-2 bg-gray-900 ${currentLvl < Level ? " bg-opacity-60" : ""}`}>
         Time consuming: <br />
         <strong>{Time}</strong>s
       </p>
