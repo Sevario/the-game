@@ -159,6 +159,7 @@
 }
 
 body {
+    min-height: 100vh;
     background: #191824;
     font-family: "Roboto";
     background-image: url(../assets/backgrounds/background1.jpg);
@@ -201,6 +202,16 @@ h6 {
     font-weight: 600;
     color: #fff;
 }
+
+/* h1 {
+    font-size: 64px;
+}
+h2 {
+    font-size: 36px;
+}
+h3 {
+    font-size: 20px;
+} */
 
 p {
     color: white;

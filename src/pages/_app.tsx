@@ -13,7 +13,7 @@ import "../styles/globals.css";
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
-}) => {
+}) => { 
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider session={session}>

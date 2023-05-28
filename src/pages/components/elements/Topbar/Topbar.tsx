@@ -1,5 +1,5 @@
 import React from "react";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Menu from "@sidebar/Nav/MainNav";
 
@@ -14,9 +14,9 @@ const AuthShowcase = () => {
         </p>
         <button
           className="text-white no-underline transition hover:bg-white/20"
-          onClick={sessionData ? () => void signOut() : () => void signIn()}
+          onClick={() => void signOut()}
         >
-          {sessionData ? "(Sign out)" : "Sign in"}
+          {"Sign out"}
         </button>
       </div>
     </>
@@ -40,7 +40,9 @@ const SkillName = () => {
 
   return (
     <div className="flex flex-row items-center justify-center gap-4 p-2">
-      <p className="text-center text-2xl text-white">{skillName ? capitalizeWords(skillName) : "The Game" }</p>
+      <p className="text-center text-2xl text-white">
+        {skillName ? capitalizeWords(skillName) : "The Game"}
+      </p>
     </div>
   );
 };
