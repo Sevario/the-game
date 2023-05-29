@@ -24,16 +24,16 @@ const Woodcutting = () => {
     }
   }, [session]);
 
-  const handleSendMessage = () => {
-    if (ws) {
-      ws.send(
-        JSON.stringify({
-          type: "skill",
-        })
-      );
-      refreshData();
-    }
-  };
+  // const handleSendMessage = () => {
+  //   if (ws) {
+  //     ws.send(
+  //       JSON.stringify({
+  //         type: "skill",
+  //       })
+  //     );
+  //     refreshData();
+  //   }
+  // };
 
   if (isLoading && isLoadingT) {
     return <div>Loading...</div>;

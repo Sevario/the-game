@@ -1,9 +1,12 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useDrag, useDrop } from "react-dnd";
+import { getInventory } from "@hooks/useInventory";
+import { useSession } from "next-auth/react";
+import WebSocketContext from "@context/WebSocketContext";
 
-const items = [
+const itemsArr = [
   {
     id: 1,
     name: "Sword",
@@ -308,93 +311,153 @@ const items = [
 ];
 
 const DraggableItem = ({ item, id, index, moveItem }) => {
-    const [{ isDragging }, drag] = useDrag({
-        type: "item",
-        item: { id, index },
-        collect: (monitor) => ({
-            isDragging: monitor.isDragging(),
-        }),
-    });
+  const [{ isDragging }, drag] = useDrag({
+    type: "item",
+    item: { id, index },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
 
-    return (
-        <div
-            ref={drag}
-            style={{ opacity: isDragging ? 0.1 : 1 }}
-        >
-            {item && <img src={item.image} alt={item.name} />}
-        </div>
-    );
+  return (
+    <div ref={drag} style={{ opacity: isDragging ? 0.1 : 1 }}>
+      {item && <img src={item.image} alt={item.name} />}
+    </div>
+  );
 };
 
 const DroppableInventorySpace = ({ children, index, moveItem }) => {
-    const [, drop] = useDrop({
-        accept: 'item',
-        drop: ({ index: dragIndex }) => moveItem(dragIndex, index),
-    });
+  const [, drop] = useDrop({
+    accept: "item",
+    drop: ({ index: dragIndex }) => moveItem(dragIndex, index),
+  });
 
-    return (
-        <div
-            ref={drop}
-            className="col-auto border"
-            style={{ width: '100%', maxWidth: '50px', height: '45px' }}
-        >
-            {children}
-        </div>
-    );
+  return (
+    <div
+      ref={drop}
+      className="col-auto border"
+      style={{ width: "100%", maxWidth: "50px", height: "45px" }}
+    >
+      {children}
+    </div>
+  );
 };
 
 const Inventory = () => {
-  let initialInventorySize = 24;
-  const [inventory, setInventory] = useState(
-    Array(initialInventorySize).fill("")
-  );
+  const [inventory, setInventory] = useState(null);
+  const [items, setItems] = useState(itemsArr);
   const [extraSpace, setExtraSpace] = useState(0);
 
-  const satchel = 2;
-  const pouch = 6;
-  const backpack = 10;
-  const largeBackpack = 16;
-  const travelersKit = 24;
+  const [userId, setUserId] = useState(null);
+  const ws = useContext(WebSocketContext);
+  const { data: session } = useSession();
+
+  const { data, invSpace, inventoryOrder, isLoading, error, refreshData } = getInventory(
+    userId ? `https://sevario.xyz:6969/api/inventory/${userId}` : null,
+    [userId, ws]
+  );
 
   const addItemToInventory = (item) => {
     setInventory((prevInventory) => [item, ...prevInventory.slice(1)]);
   };
 
   useEffect(() => {
-    setExtraSpace(largeBackpack);
-    addItemToInventory(items[5]); // This adds an item from items array above and currently it's just static (currently it adds 5th el from array)
-  }, []);
+    if (inventoryOrder) {
+      const orderedItems = inventoryOrder.map((itemId) => 
+        itemsArr.find((item) => item.id === itemId)
+      );
+      setItems(orderedItems);
+    }
+  }, [inventoryOrder]);
 
   useEffect(() => {
-    setInventory((currentState) => [
-      ...currentState,
-      ...Array(extraSpace).fill(""),
-    ]);
-  }, [extraSpace]);
+    if (session?.user?.id) {
+      setUserId(session?.user.id);
+    }
+  }, [session]);
 
-  const moveItem = (fromIndex, toIndex) => {
-    setInventory((prevInventory) => {
-      const newInventory = [...prevInventory];
-      const item = newInventory[fromIndex];
-      newInventory.splice(fromIndex, 1);
-      newInventory.splice(toIndex, 0, item);
-      return newInventory;
+  useEffect(() => {
+    if (invSpace) {
+      const parsedString = eval(invSpace);
+      console.log(parsedString);
+      setInventory(parsedString);
+      if (parsedString) {
+        addItemToInventory(itemsArr[5]); // This adds an item from items array above and currently it's just static (currently it adds 5th el from array)
+      }
+    }
+  }, [invSpace]);
+
+  const moveItem = async (dragIndex, hoverIndex) => {
+    // Swap items
+    const tempItems = [...items];
+    const draggedItem = tempItems[dragIndex];
+    tempItems.splice(dragIndex, 1);
+    tempItems.splice(hoverIndex, 0, draggedItem);
+    setItems(tempItems);
+
+    const userId = "cle1u6wy00000z96c5ztdq08n";
+
+    const response = await fetch(`https://sevario.xyz/api/inventory/${userId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ items: tempItems.map(item => item?.id) }),
     });
+
+    if (!response.ok) {
+      const data = await response.json();
+      console.error(data.error);
+    }
   };
 
-  return (
-    <DndProvider backend={HTML5Backend}>
-      <div className="text-center">Inventory space: {inventory.length}</div>
-      <div className="grid max-w-xl grid-cols-6 md:grid-cols-12 lg:grid-cols-12">
-        {inventory.map((invSpace, i) => (
-          <DroppableInventorySpace key={i} index={i} moveItem={moveItem}>
-            <DraggableItem item={invSpace} id={invSpace ? invSpace.id : null} index={i} moveItem={moveItem} />
-          </DroppableInventorySpace>
-        ))}
-      </div>
-      {/* ... */}
-    </DndProvider>
-  );
+  const saveChanges = async () => {
+    const userId = "cle1u6wy00000z96c5ztdq08n";
+
+    // Create an array of all item ids in the order they are in the inventory
+    const itemOrder = items.map((item) => item.id);
+
+    const response = await fetch(
+      `https://sevario.xyz/api/inventory/${userId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ itemOrder: itemOrder }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.status !== 200) {
+      console.error(data.error);
+    }
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (data && inventory) {
+    return (
+      <DndProvider backend={HTML5Backend}>
+        <div className="text-center">Inventory space: {inventory.length}</div>
+        <div className="grid max-w-xl grid-cols-6 md:grid-cols-12 lg:grid-cols-12">
+          {inventory.map((invSpace, i) => (
+            <DroppableInventorySpace key={i} index={i} moveItem={moveItem}>
+              <DraggableItem
+                item={invSpace}
+                id={invSpace ? invSpace.id : null}
+                index={i}
+                moveItem={moveItem}
+              />
+            </DroppableInventorySpace>
+          ))}
+        </div>
+      </DndProvider>
+    );
+  }
 };
 
 export default Inventory;
