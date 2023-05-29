@@ -48,9 +48,10 @@ model User {
   email         String?       @unique
   emailVerified DateTime?
   image         String?
-  last_online   DateTime      @db.Date
+  last_online   DateTime      @default(now()) @db.Timestamp(0)
   last_action   String
   accounts      Account[]
+  Inventory     Inventory?
   sessions      Session[]
   user_skills   user_skills[]
 }
@@ -82,4 +83,31 @@ model user_skills {
 
   @@unique([user_id, skill_id], map: "user_id")
   @@index([skill_id], map: "skill_id")
+}
+
+model Base_Items {
+  id          Int    @id @default(autoincrement())
+  name        String @db.Text
+  description String @db.Text
+}
+
+model Base_Items_M {
+  id    Int     @id @default(autoincrement())
+  name  String? @db.VarChar(255)
+  stat1 String  @db.VarChar(255)
+}
+
+model Inventory {
+  id              Int    @id @default(autoincrement())
+  user_id         String @unique(map: "user_Id")
+  inventory       String @db.Text
+  inventory_order String @db.Text
+  User            User   @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "userid_inv")
+}
+
+model Modifiers {
+  id        Int    @id @default(autoincrement())
+  name      String @db.VarChar(255)
+  code      String @db.VarChar(255)
+  mod_range String @db.VarChar(255)
 }
