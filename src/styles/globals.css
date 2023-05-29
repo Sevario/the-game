@@ -216,3 +216,11 @@ h3 {
 p {
     color: white;
 }
+.inventory {
+    position: relative;
+    width: 100%;
+}
+.item:nth-child(odd) {
+    background-color: red;
+    width: min-content;
+}
