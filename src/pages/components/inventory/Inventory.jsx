@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { useDrag, useDrop } from "react-dnd";
+import { useDroppable, useDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
+import { DndContext } from "@dnd-kit/core";
 import { getInventory } from "@hooks/useInventory";
 import { useSession } from "next-auth/react";
 import WebSocketContext from "@context/WebSocketContext";
@@ -69,136 +71,110 @@ const itemsArr = [
   },
 ];
 
-const DraggableItem = ({ item, id, index }) => {
-  const [{ isDragging }, drag] = useDrag({
-    type: "item",
-    item: { id, index },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
+function Slot(props) {
+  const { isOver, setNodeRef } = useDroppable({
+    id: props.id,
+    data: {
+      index: props.index,
+    }
   });
+  const style = {
+    opacity: isOver ? 1 : 0.5,
+  };
 
   return (
-    <div ref={drag} style={{ opacity: isDragging ? 0.1 : 1 }}>
-      {item && <span>{item.name}</span>}
+    <div ref={setNodeRef} style={style}>
+      {props.children}
     </div>
   );
-};
+}
 
-const DroppableInventorySpace = ({ children, index, moveItem }) => {
-  const [, drop] = useDrop({
-    accept: "item",
-    drop: ({ index: dragIndex }) => moveItem(dragIndex, index),
+function Draggable(props) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: props.id,
   });
+  const style = {
+    // Outputs `translate3d(x, y, 0)`
+    transform: CSS.Translate.toString(transform),
+  };
 
   return (
-    <div
-      ref={drop}
-      className="col-auto border"
-      style={{ width: "100%", maxWidth: "50px", height: "45px" }}
-    >
-      {children}
-    </div>
+    <button ref={setNodeRef} style={style} {...listeners} {...attributes}>
+      {props.children}
+    </button>
   );
-};
+}
 
 const Inventory = () => {
   const [inventory, setInventory] = useState(null);
   const [items, setItems] = useState(itemsArr);
+  const [parent, setParent] = useState(null);
   const [extraSpace, setExtraSpace] = useState(0);
 
   const [userId, setUserId] = useState(null);
   const ws = useContext(WebSocketContext);
   const { data: session } = useSession();
 
-  const { data, invSpace, inventoryOrder, isLoading, error, refreshData } = getInventory(
-    userId ? `https://sevario.xyz:6969/api/inventory/${userId}` : null,
-    [userId, ws]
-  );
+  const draggable = <Draggable id="draggable">Item</Draggable>;
 
-  
+  const { data, invSpace, inventoryOrder, isLoading, error, refreshData } =
+    getInventory(
+      userId ? `https://sevario.xyz:6969/api/inventory/${userId}` : null,
+      [userId, ws]
+    );
+
   // useEffect(() => {
   //   if (inventoryOrder) {
-  //     const orderedItems = inventoryOrder.map((itemId) => 
+  //     const orderedItems = inventoryOrder.map((itemId) =>
   //     itemsArr.find((item) => item.id === itemId)
   //     );
   //     setItems(orderedItems);
   //   }
   // }, [inventoryOrder]);
-  
+
   useEffect(() => {
     if (session?.user?.id) {
       setUserId(session?.user.id);
     }
   }, [session]);
-  
+
   useEffect(() => {
     if (invSpace) {
       const parsedString = eval(invSpace);
       console.log(parsedString);
       setInventory(parsedString);
-      addItemToInventory(items[0]); // This adds an item from items array above and currently it's just static (currently it adds 5th el from array)
+      // addItemToInventory(items[0]); // This adds an item from items array above and currently it's just static (currently it adds 5th el from array)
     }
   }, [invSpace]);
-  
-  const addItemToInventory = (item) => {
-    // setItems((prevItems) => [item, ...prevItems]);
-    console.log(item, 'the item')
-    setInventory((prevInventory) => [item, ...prevInventory]);
-  };
 
-  const moveItem = async (dragIndex, hoverIndex) => {
-    // Swap items
-    const tempItems = [...items];
-    const draggedItem = tempItems[dragIndex];
-    tempItems.splice(dragIndex, 1);
-    tempItems.splice(hoverIndex, 0, draggedItem);
-    console.log(draggedItem, 'dragged item');
-    console.log('Moving item from', dragIndex, 'to', hoverIndex);
-    console.log('Items before move:', tempItems);
+  // const addItemToInventory = (item) => {
+  //   // setItems((prevItems) => [item, ...prevItems]);
+  //   console.log(item, "the item");
+  //   setInventory((prevInventory) => [item, ...prevInventory]);
+  // };
 
-    setItems(tempItems);
-
-    console.log(items, 'items right after setitems()');
-    console.log('Items after move:', tempItems)
-
-
-    const userId = "cle1u6wy00000z96c5ztdq08n";
-
-    const response = await fetch(`https://sevario.xyz:6969/api/inventory/${userId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ items: tempItems.map(item => item?.id) }),
-    });
-
-    if (!response.ok) {
-      const data = await response.json();
-      console.error(data.error);
-    }
-  };
-
-  
 
   if (data && inventory) {
     return (
-      <DndProvider backend={HTML5Backend}>
+      <>
         <div className="text-center">Inventory space: {inventory.length}</div>
-        <div className="grid max-w-xl grid-cols-6 md:grid-cols-12 lg:grid-cols-12">
-          {inventory.map((invSlot, i) => (
-            <DroppableInventorySpace key={i} index={i} moveItem={moveItem}>
-              <DraggableItem
-                item={invSlot}
-                id={invSlot ? invSlot.id : null}
-                index={i}
-                // moveItem={moveItem}
-              />
-            </DroppableInventorySpace>
-          ))}
-        </div>
-      </DndProvider>
+        <DndContext onDragEnd={handleDragEnd}>
+          <div className="grid max-w-xl grid-cols-6 md:grid-cols-12 lg:grid-cols-12">
+            {inventory.map((invSlot, i) => (
+              // <div>slot</div>
+              <Slot id={invSlot}>
+                  test
+              </Slot>
+            ))}
+          </div>
+          {!parent ? draggable : null}
+        </DndContext>
+      </>
     );
+
+    function handleDragEnd({ over }) {
+      setParent(over ? over.id : null);
+    }
   }
 };
 
