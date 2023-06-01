@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { useDroppable, useDraggable } from "@dnd-kit/core";
+import { useDroppable } from "@dnd-kit/core";
+import Item from "./Item";
+import InventorySlot from "./InventorySlot";
 import { CSS } from "@dnd-kit/utilities";
 import { DndContext } from "@dnd-kit/core";
 import { getInventory } from "@hooks/useInventory";
@@ -71,66 +71,20 @@ const itemsArr = [
   },
 ];
 
-function Slot(props) {
-  const { isOver, setNodeRef } = useDroppable({
-    id: props.id,
-    data: {
-      index: props.index,
-    }
-  });
-  const style = {
-    opacity: isOver ? 1 : 0.5,
-  };
-
-  return (
-    <div ref={setNodeRef} style={style}>
-      {props.children}
-    </div>
-  );
-}
-
-function Draggable(props) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: props.id,
-  });
-  const style = {
-    // Outputs `translate3d(x, y, 0)`
-    transform: CSS.Translate.toString(transform),
-  };
-
-  return (
-    <button ref={setNodeRef} style={style} {...listeners} {...attributes}>
-      {props.children}
-    </button>
-  );
-}
-
 const Inventory = () => {
   const [inventory, setInventory] = useState(null);
-  const [items, setItems] = useState(itemsArr);
-  const [parent, setParent] = useState(null);
+  const [itemLocation, setItemLocation] = useState(0);
   const [extraSpace, setExtraSpace] = useState(0);
 
   const [userId, setUserId] = useState(null);
   const ws = useContext(WebSocketContext);
   const { data: session } = useSession();
 
-  const draggable = <Draggable id="draggable">Item</Draggable>;
-
   const { data, invSpace, inventoryOrder, isLoading, error, refreshData } =
     getInventory(
       userId ? `https://sevario.xyz:6969/api/inventory/${userId}` : null,
       [userId, ws]
     );
-
-  // useEffect(() => {
-  //   if (inventoryOrder) {
-  //     const orderedItems = inventoryOrder.map((itemId) =>
-  //     itemsArr.find((item) => item.id === itemId)
-  //     );
-  //     setItems(orderedItems);
-  //   }
-  // }, [inventoryOrder]);
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -143,16 +97,21 @@ const Inventory = () => {
       const parsedString = eval(invSpace);
       console.log(parsedString);
       setInventory(parsedString);
-      // addItemToInventory(items[0]); // This adds an item from items array above and currently it's just static (currently it adds 5th el from array)
     }
   }, [invSpace]);
 
-  // const addItemToInventory = (item) => {
-  //   // setItems((prevItems) => [item, ...prevItems]);
-  //   console.log(item, "the item");
-  //   setInventory((prevInventory) => [item, ...prevInventory]);
-  // };
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
 
+    if (
+      over &&
+      active.id &&
+      active.data.current.supports.includes(over.data.current.type)
+    ) {
+      console.log(active);
+      setItemLocation(parseInt(over.id));
+    }
+  };
 
   if (data && inventory) {
     return (
@@ -161,20 +120,14 @@ const Inventory = () => {
         <DndContext onDragEnd={handleDragEnd}>
           <div className="grid max-w-xl grid-cols-6 md:grid-cols-12 lg:grid-cols-12">
             {inventory.map((invSlot, i) => (
-              // <div>slot</div>
-              <Slot id={invSlot}>
-                  test
-              </Slot>
+              <InventorySlot id={i.toString()} key={i}>
+                {itemLocation === i && <Item />}
+              </InventorySlot>
             ))}
           </div>
-          {!parent ? draggable : null}
         </DndContext>
       </>
     );
-
-    function handleDragEnd({ over }) {
-      setParent(over ? over.id : null);
-    }
   }
 };
 
