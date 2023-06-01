@@ -28,6 +28,6 @@
       "@compskill/*": ["src/pages/components/elements/skills/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs", "src/pages/context/skillContext.js", "src/pages/context/Tasks/TaskContext.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs", "src/pages/context/skillContext.js", "src/pages/context/Tasks/TaskContext.jsx", "src/pages/components/inventory/Inventory.jsx"],
   "exclude": ["node_modules"]
 }
