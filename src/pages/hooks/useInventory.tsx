@@ -5,7 +5,7 @@ const getInventory = (url: string | null = null, dependencies = []) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [invSpace, setInvSpace] = useState<string | null>(null);
+  const [invSpace, setInvSpace] = useState<[] | null>(null);
   const [inventoryOrder, setInventoryOrder] = useState<number[]>([]);
 
   const fetchData = useCallback(async () => {
@@ -20,7 +20,11 @@ const getInventory = (url: string | null = null, dependencies = []) => {
       const data = await response.json();
       setData(data);
       if (data) {
-        setInvSpace(data.result[0].inventory);
+        let inventoryArray = data.result[0].inventory.split(",");
+        while (inventoryArray.length < 24) {
+          inventoryArray.push("");
+        }
+        setInvSpace(inventoryArray);
         const parsedOrder = JSON.parse(data.result[0].inventory_order);
         setInventoryOrder(parsedOrder);
       }
