@@ -14,17 +14,20 @@ const getInventory = (url: string | null = null, dependencies = []) => {
     setIsLoading(true);
     try {
       const response = await fetch(url);
+
       if (!response.ok) {
         throw new Error("Error fetching data");
       }
+
       const data = await response.json();
-      setData(data);
+      
       if (data) {
-        let inventoryArray = data.result[0].inventory.split(",");
-        while (inventoryArray.length < 24) {
-          inventoryArray.push("");
-        }
+        setData(data);
+        let inventoryArray = eval(data.result[0].inventory);
+
         setInvSpace(inventoryArray);
+
+        // For now, this is useless, fuck this
         const parsedOrder = JSON.parse(data.result[0].inventory_order);
         setInventoryOrder(parsedOrder);
       }
@@ -50,4 +53,42 @@ const getInventory = (url: string | null = null, dependencies = []) => {
   return { data, invSpace, inventoryOrder, isLoading, error, refreshData };
 };
 
-export { getInventory };
+const getItems = (url: string | null = null, dependencies = []) => {
+  const [itemsData, setItemsData] = useState(null);
+  const [itemsLoading, setItemsLoading] = useState(true);
+  const [itemsError, setItemsError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    if (!url) return;
+
+    setItemsLoading(true);
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Error fetching data");
+      }
+      const data = await response.json();
+      setItemsData(data);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setItemsError(err.message);
+      } else {
+        setItemsError("An unknown error occurred.");
+      }
+    } finally {
+      setItemsLoading(false);
+    }
+  }, [url]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData, ...dependencies]);
+
+  const refreshItemsData = () => {
+    fetchData();
+  };
+
+  return { itemsData, itemsLoading, itemsError, refreshItemsData };
+};
+
+export { getInventory, getItems };

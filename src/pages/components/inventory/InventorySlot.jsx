@@ -5,11 +5,19 @@ const InventorySlot = ({ id, children, isDragging }) => {
   const { setNodeRef } = useDroppable({
     id: id,
     data: {
-        type: 'item'
-    }
+      type: "item",
+    },
   });
 
-  return <div className="shadow-lg rounded-md border border-gray-500 overflow-hidden" ref={setNodeRef} style={{ height: '60px', overflow: isDragging ? 'visible' : 'hidden' }}>{children}</div>;
+  return (
+    <div
+      className="overflow-hidden rounded-md border border-gray-500 shadow-lg"
+      ref={setNodeRef}
+      style={{ height: "60px", overflow: isDragging ? "visible" : "hidden" }}
+    >
+      {children}
+    </div>
+  );
 };
 
-export default InventorySlot;
+export default React.memo(InventorySlot);
