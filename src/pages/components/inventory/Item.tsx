@@ -23,7 +23,7 @@ const Item: React.FC<ItemProps> = ({ data, id, setIsDragging }) => {
 
   useEffect(() => {
     setIsDragging(isItemDragging);
-    console.log(data.sprite)
+    // console.log(data.sprite)
   }, [isItemDragging, setIsDragging]);
   
   if (!data) {

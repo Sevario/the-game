@@ -101,7 +101,7 @@ const getSkill = (url: string, dependencies = []) => {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData, ...dependencies]);
+  }, [fetchData, ...dependencies, data]);
 
   const refreshData = () => {
     fetchData();

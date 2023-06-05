@@ -52,11 +52,11 @@ const Inventory = () => {
       // console.log(invSpace, 'invSpace');
       // console.log(itemsData, "itemsData");
     }
-    if (itemsData && itemsData.result) {
-      setItems(itemsData.result);
-      console.log(itemsData.result[0])
-    }
-  }, [session, invSpace, itemsData]);
+    // if (itemsData && itemsData.result) {
+    //   setItems(itemsData.result);
+    //   console.log(itemsData.result[0])
+    // }
+  }, [session, invSpace]);
 
   useEffect(() => {
     if (invSpace && items && items.length > 0) {
@@ -64,7 +64,14 @@ const Inventory = () => {
       newInventory[0] = items[0];
       setInventory(newInventory);
     }
-  }, [invSpace, items]);
+  }, [invSpace, items, itemsData]);
+
+  const giveItem = () => {
+    if (itemsData && itemsData.result) {
+      setItems(itemsData.result);
+      // console.log(itemsData.result[0])
+    }
+  }
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -82,6 +89,8 @@ const Inventory = () => {
       const newInventory = [...inventory];
       const [removedItem] = newInventory.splice(oldIndex, 1);
       newInventory.splice(newIndex, 0, removedItem);
+
+      console.log('mofev From:', oldIndex, 'moved to:', newIndex)
 
       // Update the local state
       setInventory(newInventory);
@@ -109,8 +118,8 @@ const Inventory = () => {
         You currently have {inventory.length} inventory slots
       </div>
       <DndContext onDragEnd={handleDragEnd}>
-        <div className="my-10 flex justify-center">
-          <div className="grid max-w-3xl grid-cols-6 gap-1 bg-gray-800 p-3 md:grid-cols-12 lg:grid-cols-12">
+        <div className="my-10 flex justify-center flex-col items-center">
+          <div className="grid max-w-5xl grid-cols-6 gap-1 bg-gray-800 p-3 md:grid-cols-8 lg:grid-cols-12">
             {/* {console.log(inventory)} */}
             {/* {inventory.map((invSlot, i) => (
               <InventorySlot isDragging={isDragging} id={i.toString()} key={i}>
@@ -129,6 +138,7 @@ const Inventory = () => {
               </InventorySlot>
             ))}
           </div>
+          <button onClick={() => giveItem()}>Give item!</button>
         </div>
       </DndContext>
     </>

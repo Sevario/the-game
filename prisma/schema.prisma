@@ -92,9 +92,10 @@ model Base_Items {
 }
 
 model Base_Items_M {
-  id    Int     @id @default(autoincrement())
-  name  String? @db.VarChar(255)
-  stat1 String  @db.VarChar(255)
+  id     Int     @id @default(autoincrement())
+  name   String? @db.VarChar(255)
+  stat1  String  @db.VarChar(255)
+  sprite String? @db.Text
 }
 
 model Inventory {

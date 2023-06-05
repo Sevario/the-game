@@ -11,7 +11,7 @@ const InventorySlot = ({ id, children, isDragging }) => {
 
   return (
     <div
-      className="overflow-hidden rounded-md border border-gray-500 shadow-lg"
+      className="overflow-hidden w-14 rounded-md border border-gray-500 shadow-lg"
       ref={setNodeRef}
       style={{ height: "60px", overflow: isDragging ? "visible" : "hidden" }}
     >
