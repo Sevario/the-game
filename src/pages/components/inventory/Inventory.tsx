@@ -13,6 +13,8 @@ const Inventory = () => {
   const [items, setItems] = useState([]);
   const [itemLocation, setItemLocation] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [baseItems, setBaseItems] = useState([]);
+
 
   const ws = useContext(WebSocketContext);
   const { data: session } = useSession();
@@ -22,8 +24,7 @@ const Inventory = () => {
       [userId, ws]
     );
   const { itemsData, itemsLoading, itemsError, refreshItemsData } = getItems(
-    userId ? `https://sevario.xyz:6969/api/base_items_m/${userId}` : null,
-    [userId, ws]
+    `https://sevario.xyz:6969/api/base_items_m/1`,
   );
 
   const updateInventoryOnServer = async (userId, inventory) => {
@@ -72,6 +73,25 @@ const Inventory = () => {
       // console.log(itemsData.result[0])
     }
   }
+  useEffect(() => {
+    if (inventory) {
+      const ids = inventory.filter(invSlot => invSlot !== null).map(invSlot => invSlot.id).join(',');
+      if (ids.length > 0) {
+        fetch(`https://sevario.xyz:6969/api/base_items_m/${ids}`)
+          .then(response => response.json())
+          .then(data => {
+            const itemsById = data.results.reduce((acc, item) => {
+              acc[item.id] = item;
+              return acc;
+            }, {});
+
+            const newInventory = inventory.map(invSlot => invSlot === null ? null : { ...invSlot, data: itemsById[invSlot.id] });
+            setBaseItems(newInventory);
+          })
+          .catch(error => console.error(error));
+      }
+    }
+  }, [inventory]);
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -120,23 +140,23 @@ const Inventory = () => {
       <DndContext onDragEnd={handleDragEnd}>
         <div className="my-10 flex justify-center flex-col items-center">
           <div className="grid max-w-5xl grid-cols-6 gap-1 bg-gray-800 p-3 md:grid-cols-8 lg:grid-cols-12">
-            {/* {console.log(inventory)} */}
             {/* {inventory.map((invSlot, i) => (
               <InventorySlot isDragging={isDragging} id={i.toString()} key={i}>
                 {invSlot && <Item data={invSlot} setIsDragging={setIsDragging} />}
               </InventorySlot>
             ))} */}
-            {inventory.map((invSlot, i) => (
+            {baseItems.map((invSlot, i) => (
               <InventorySlot isDragging={isDragging} id={`slot-${i}`} key={i}>
-                {invSlot && (
+                {invSlot && invSlot.data && (
                   <Item
                     id={`item-${i}`}
-                    data={invSlot}
+                    data={invSlot.data}
                     setIsDragging={setIsDragging}
                   />
                 )}
               </InventorySlot>
             ))}
+
           </div>
           <button onClick={() => giveItem()}>Give item!</button>
         </div>
