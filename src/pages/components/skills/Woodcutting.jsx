@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import WebSocketContext from "@context/WebSocketContext";
 import { getSkill, getSkillT } from "@hooks/useSkills";
 import SkillButton from "@compskill/SkillButton";
+import SkillInfo from "@compskill/SkillInfo";
 
 const Woodcutting = () => {
   const skillName = "woodcutting";
@@ -24,17 +25,6 @@ const Woodcutting = () => {
     }
   }, [session]);
 
-  // const handleSendMessage = () => {
-  //   if (ws) {
-  //     ws.send(
-  //       JSON.stringify({
-  //         type: "skill",
-  //       })
-  //     );
-  //     refreshData();
-  //   }
-  // };
-
   if (isLoading && isLoadingT) {
     return <div>Loading...</div>;
   }
@@ -50,11 +40,17 @@ const Woodcutting = () => {
   if (data && dataT) {
     return (
       <>
-        <h3>
+      <SkillInfo
+      skillName={data.skill_name}
+      level={data.level}
+      currentXP={data.current_xp}
+      description={data.description}
+      />
+        {/* <h3>
           {data.skill_name} (Level: {data.level})
         </h3>
         <p>Description: {data.description}</p>
-        <p>Current XP: {data.current_xp}</p>
+        <p>Current XP: {data.current_xp}</p> */}
         <br />
         <div className="flex gap-3 flex-wrap justify-center">
           {dataT.trees.map((tree, id) => (
