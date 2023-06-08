@@ -9,7 +9,7 @@ const TaskProgress = () => {
   const { data: session } = useSession();
   const [userId, setUserId] = useState('');
   const [progressIntervalId, setProgressIntervalId] = useState(null);
-  const [ws, connected] = useWebSocket();
+  const [ws, connected, sendUserId] = useWebSocket();
 
   useEffect(() => {
     if (session) {
