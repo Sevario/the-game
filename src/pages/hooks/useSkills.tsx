@@ -1,7 +1,9 @@
 import { useEffect, useState, useContext, useRef, useCallback } from 'react';
 import WebSocketContext from '@context/WebSocketContext';
 
-const useWebSocket = (initialUserId: string | null = null, retryInterval = 5000) => {
+type WebSocketHookReturn = [WebSocket | null, boolean, (userId: string) => void];
+
+const useWebSocket = (initialUserId: string | null = null, retryInterval = 5000): WebSocketHookReturn => {
   const context = useContext(WebSocketContext);
 
   if (context) {
