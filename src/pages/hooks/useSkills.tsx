@@ -72,7 +72,7 @@ const useWebSocket = (initialUserId: string | null = null, retryInterval = 5000)
 export default useWebSocket;
 
 
-const getSkill = (url: string, dependencies = []) => {
+const useGetSkill = (url: string, dependencies = []) => {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -109,9 +109,9 @@ const getSkill = (url: string, dependencies = []) => {
 
   return { data, isLoading, error, refreshData };
 };
-export { getSkill };
+export { useGetSkill };
 
-const getSkillT = (url: string, dependencies = []) => {
+const useGetSkillT = (url: string, dependencies = []) => {
   const [dataT, setData] = useState(null);
   const [isLoadingT, setIsLoading] = useState(true);
   const [errorT, setError] = useState<string | null>(null);
@@ -148,4 +148,4 @@ const getSkillT = (url: string, dependencies = []) => {
 
   return { dataT, isLoadingT, errorT, refreshDataT };
 };
-export { getSkillT };
+export { useGetSkillT };

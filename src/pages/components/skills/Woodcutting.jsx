@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useSession } from "next-auth/react";
 import WebSocketContext from "@context/WebSocketContext";
-import { getSkill, getSkillT } from "@hooks/useSkills";
+import { useGetSkill, useGetSkillT } from "@hooks/useSkills";
 import SkillButton from "@compskill/SkillButton";
 import SkillInfo from "@compskill/SkillInfo";
 
@@ -10,11 +10,11 @@ const Woodcutting = () => {
   const { data: session } = useSession();
   const [userId, setUserId] = useState(null);
   const ws = useContext(WebSocketContext);
-  const { data, isLoading, error, refreshData } = getSkill(
+  const { data, isLoading, error, refreshData } = useGetSkill(
     userId ? `https://sevario.xyz:6969/api/skill/${skillName}/${userId}` : null,
     [userId, ws]
   );
-  const { dataT, isLoadingT, errorT, refreshDataT } = getSkillT(
+  const { dataT, isLoadingT, errorT, refreshDataT } = useGetSkillT(
     userId ? `https://sevario.xyz:6969/api/skill/${skillName}` : null,
     [userId, ws]
   );
