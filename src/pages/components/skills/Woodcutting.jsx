@@ -18,7 +18,7 @@ const Woodcutting = () => {
     userId ? `https://sevario.xyz:6969/api/skill/${skillName}` : null,
     [userId, ws]
   );
-
+ 
   useEffect(() => {
     if (session?.user?.id) {
       setUserId(session.user.id);
