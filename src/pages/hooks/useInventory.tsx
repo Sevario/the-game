@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-const getInventory = (url: string | null = null, dependencies = []) => {
+const useGetInventory = (url: string | null = null, dependencies: any[]) => {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +53,7 @@ const getInventory = (url: string | null = null, dependencies = []) => {
   return { data, invSpace, inventoryOrder, isLoading, error, refreshData };
 };
 
-const getItems = (url: string | null = null, dependencies = []) => {
+const useGetItems = (url: string | null = null, dependencies = []) => {
   const [itemsData, setItemsData] = useState(null);
   const [itemsLoading, setItemsLoading] = useState(true);
   const [itemsError, setItemsError] = useState<string | null>(null);
@@ -91,4 +91,4 @@ const getItems = (url: string | null = null, dependencies = []) => {
   return { itemsData, itemsLoading, itemsError, refreshItemsData };
 };
 
-export { getInventory, getItems };
+export { useGetInventory, useGetItems };

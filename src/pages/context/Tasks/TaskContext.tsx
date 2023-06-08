@@ -10,7 +10,7 @@ interface Task {
 interface TaskContextType {
   activeTask: Task | null;
   progress: number;
-  setProgress: (value: number) => void;
+  setProgress: React.Dispatch<React.SetStateAction<number>>;
   startTask: (task: Task) => void;
   stopTask: () => void;
 }

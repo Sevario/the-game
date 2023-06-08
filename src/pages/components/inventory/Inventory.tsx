@@ -3,13 +3,13 @@ import Loader from "@components/elements/Loader";
 import Item from "@components/inventory/Item";
 import InventorySlot from "./InventorySlot";
 import { DndContext } from "@dnd-kit/core";
-import { getInventory, getItems } from "@hooks/useInventory";
+import { useGetInventory, useGetItems } from "@hooks/useInventory";
 import { useSession } from "next-auth/react";
 import WebSocketContext from "@context/WebSocketContext";
 
 const Inventory = () => {
-  const [userId, setUserId] = useState(null);
-  const [inventory, setInventory] = useState([]);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [inventory, setInventory] = useState<any[] | null>(null);
   const [items, setItems] = useState([]);
   const [itemLocation, setItemLocation] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -19,11 +19,11 @@ const Inventory = () => {
   const ws = useContext(WebSocketContext);
   const { data: session } = useSession();
   const { data, invSpace, inventoryOrder, isLoading, error, refreshData } =
-    getInventory(
+    useGetInventory(
       userId ? `https://sevario.xyz:6969/api/inventory/${userId}` : null,
       [userId, ws]
     );
-  const { itemsData, itemsLoading, itemsError, refreshItemsData } = getItems(
+  const { itemsData, itemsLoading, itemsError, refreshItemsData } = useGetItems(
     `https://sevario.xyz:6969/api/base_items_m/1`,
   );
 
@@ -47,7 +47,7 @@ const Inventory = () => {
   };
 
   useEffect(() => {
-    if (session.user.id) {
+    if (session?.user) {
       setUserId(session.user.id);
       setInventory(invSpace);
       // console.log(invSpace, 'invSpace');

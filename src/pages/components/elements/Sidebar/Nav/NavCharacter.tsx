@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import Inventory from "@components/Inventory/Inventory";
+// import Inventory from "@components/Inventory/Inventory";
 
 const NavCharacter = () => {
   return (
