@@ -6,7 +6,7 @@ const NavCharacter = () => {
   return (
     <>
       <Link
-        href={`/components/inventory/Inventory`}
+        href={`/player/cropsychooo/inventory`}
         className="text-white no-underline transition hover:bg-white/20"
       >
         Inventory

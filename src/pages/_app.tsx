@@ -2,7 +2,7 @@ import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Layout from "./components/layout";
+import Layout from "@components/layout";
 import { Provider } from 'react-redux';
 import store from '@store/store';
 
