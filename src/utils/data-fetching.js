@@ -8,10 +8,10 @@ export async function fetchPlayerSingle(id, name) {
         return;
     }
     if (id) {
-        url = `http://localhost:3000/api/players?name=${id}`;
+        url = `${API_URL}/api/players?name=${id}`;
     }
     else if (name) {
-        url = `http://localhost:3000/api/players?name=${name}`;
+        url = `${API_URL}/api/players?name=${name}`;
     }
     
     console.log("Fetching:", url);
