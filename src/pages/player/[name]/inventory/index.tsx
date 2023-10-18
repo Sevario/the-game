@@ -8,7 +8,8 @@ const Inventory = ({ player }: any) => {
   }
   return (
     // <div>Inventory</div>
-    <InventoryC />
+    // <InventoryC />
+    <div>test</div>
   );
 }
 
